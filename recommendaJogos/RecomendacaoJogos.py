@@ -1,23 +1,123 @@
 from numpy import *
 import numpy as np
+import Usuario
+import Jogos
+from Jogos import Jogos
+from Usuario import Usuario
+jogos = list();
+a = list()
+j = 0
 
-numJogos = 10
-numUsuarios = 5
+
+with open("Jogos.txt", 'r+') as txtJogos:
+    for line in txtJogos:
+
+
+
+        if j < 5:
+            line = line.strip('\n')
+            a.append(line)
+            j += 1
+
+        else:
+            b = Jogos(str(a[0]).upper(), float(a[1]), float(a[2]), float(a[3]), float(a[4]))
+            jogos.append(b)
+            del a
+            a = list()
+            line = line.strip('\n')
+            a.append(line)
+            j = 1
+jogos.append(Jogos(str(a[0]).upper(), float(a[1]), float(a[2]), float(a[3]), float(a[4])))
+del a
+
+for j in range(len(jogos)):
+    print jogos[j].getNomeJogo()
+
+
+
+
+
+
+
+
+
+
+nomes = ["Jean", "Lukkas", "Daniel", "Newt"] #"Jales", "Felipe", "Samuka", "Thales", "Hugazzo", "Romario"]
+
+
+#eu sei que eu poderia ter feito isso de maneira mais automatica e simples mas fuck it
+userJean = Usuario(nomes[0])
+userJean.adicionaJogo("Final Fantasy XII", 10)
+userJean.adicionaJogo("Cory in the house", 8)
+userJean.adicionaJogo("Crash Team Racing", 7)
+userJean.adicionaJogo("Silent Hill", 9)
+usuariosLista = []
+usuariosLista.append(userJean)
+
+
+userLukkas = Usuario(nomes[1])
+userLukkas.adicionaJogo("Silent Hill", 7)
+userLukkas.adicionaJogo("Dragon Quest V", 10)
+userLukkas.adicionaJogo("Crash Team Racing", 1)
+userLukkas.adicionaJogo("NBA", 9)
+usuariosLista.append(userLukkas)
+
+userDaniel = Usuario(nomes[2])
+userDaniel.adicionaJogo("Need for Speed", 9)
+userDaniel.adicionaJogo("FIFA", 8)
+userDaniel.adicionaJogo("The Walking Dead", 1)
+userDaniel.adicionaJogo("Xenogears", 4)
+usuariosLista.append(userDaniel)
+
+
+userNewt = Usuario(nomes[3])
+userNewt.adicionaJogo("Final Fantasy XII", 10)
+userNewt.adicionaJogo("Dragon Quest V", 9)
+userNewt.adicionaJogo("Crash Team Racing", 6)
+userNewt.adicionaJogo("Xenogears", 9)
+
+usuariosLista.append(userNewt)
+
+numUsuarios = len(usuariosLista)
+numJogos = len(jogos)
+
+#print numJogos, numUsuarios
+
 
 
 #criando uma matriz que vai guardar valores aleatorios que sao as notas dos jogos de cada usuario
 
-notas = random.randint(11, size=(numJogos, numUsuarios))
+notas = np.matrix([[0]]*10)
+notasM = []
 
-#print notas
+def colocaNotas():
 
+        for y in range(numUsuarios):
+            b = []
+            for x in range(numJogos):
 
-'''se a nota de um usuario para um jogo for igual a zero isso significa que esse jogo nao
-foi avaliado pelo usuario em questao. 5 colunas representando os usuarios, 10 linhas repreentando o numero de jogos'''
+                if jogos[x].getNomeJogo()[:-1] in usuariosLista[y].getJogos():
+                    #print "oi"
+                   b.append(float(usuariosLista[y].getNota(jogos[x].getNomeJogo()[:-1])))
+                else:
+                    b.append(0)
+            notasM.append(b)
+
+'''for i in range(len(usuariosLista)):
+    for key in usuariosLista[i].getJogos().keys():
+        print str(usuariosLista[0].getJogos()[key])+ " " + str(key)
+'''
+colocaNotas()
+print str(jogos[0].getNomeJogo())
+print notasM
+
+'''
+se a nota de um usuario para um jogo for igual a zero isso significa que esse jogo nao
+foi avaliado pelo usuario em questao. 5 colunas representando os usuarios, 10 linhas repreentando o numero de jogos
 
 deuNota = (notas!= 0 ) * 1
 
-print deuNota
+#print deuNota
 
 #zerando a primeira coluna da matriz para como se eu nao tivesse avaliado nenhum jogo
 notasJean = zeros((numJogos, 1))
@@ -29,7 +129,7 @@ notasJean[0] = 9
 notasJean[5] = 6
 notasJean[9] = 10
 
-print notasJean
+#print notasJean
 #deletando a primeira coluna
 notas = np.delete(notas, [0,0], axis=1)
 
@@ -38,9 +138,9 @@ notas = np.delete(notas, [0,0], axis=1)
 notas = append(notasJean, notas, axis=1)
 deuNota = (notas!= 0 ) * 1
 
-print notas
+#print notas
 
-print deuNota
+#print deuNota
 
 
 #funcao que normaliza os dados, precisamos dela para ficar mais facil identificar elementos acima da media e abaixo.
@@ -129,7 +229,10 @@ jogoFeatures, usuarioPref = unroll_params(optimal_movie_features_and_user_prefs,
 
 allPrev = jogoFeatures.dot(usuarioPref.T)
 
-print allPrev
+#print allPrev
 previsoesJean = allPrev[:, 0:1] + notasMedia
 
-print previsoesJean
+#print previsoesJean
+'''
+
+
