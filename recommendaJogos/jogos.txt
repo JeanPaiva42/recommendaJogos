@@ -1,42 +1,22 @@
-Silent Hill
-6
-10
-0
-6
-Final Fantasy XII
-10
-8
-0
-7
-Crash Team Racing
-8
-1
-8
-8
-Street Fighter IV
-9
-1
-9
-5
 The Walking Dead
 2
-10
-0
+10 
+0 
 5
 Xenogears
 7
-9
-0
+9 
+0 
 3
 Overwatch
-9
-0
-8
-9
+9 
+0 
+8 
+9 
 Cory in the house
 10
-10
-10
+10 
+10 
 10
 Dragon Quest V
 8
@@ -45,14 +25,14 @@ Dragon Quest V
 6
 Need For Speed
 8
-1
+1 
 8
 8
 FIFA
-9
+9 
 1
 10
-5		
+5
 NBA
 10 
 0

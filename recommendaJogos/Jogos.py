@@ -1,32 +1,18 @@
 class Jogos(object):
-    gameplay = 0
-    narrativa = 0
-    esporte = 0
-    acao = 0
-
-
-    def __init__(self, nome, f1, f2,f3,f4):
+    def __init__(self, nome, a):
         self._nomeDoJogo = nome
-        self._gameplay = f1
-        self._narrativa = f2
-        self._esporte = f3
-        self._acao = f4
+        self._listaFeature = []
+        for i in range(len(a)):
+            self._listaFeature.append(float(a[i]))
 
-
-    def getGameplayVal(self):
-        return self._gameplay
-
-    def getNarrativaVal(self):
-        return self._narrativa
-
-    def getEsporteVal(self):
-        return self._narrativa
-
-    def getAcaoVal(self):
-        return self._esporte
+    def getFeature(self, a):
+        return self._listaFeature[a]
 
     def getNomeJogo(self):
         return self._nomeDoJogo
 
     def setNomeJogo(self, nome):
         self._nomeDoJogo = nome
+
+    def getListaFeatures(self):
+        return self._listaFeature

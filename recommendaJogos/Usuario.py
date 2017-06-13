@@ -4,6 +4,9 @@ class Usuario(object):
     def __init__(self, nome):
         self._nome = nome
         self._listaJogos = {}
+        self._somaPref = []
+
+
 
     def getNome(self):
         return self._nome
@@ -28,7 +31,11 @@ class Usuario(object):
         for keys, valor in self._listaJogos.iteritems():
             print keys, valor
 
+    def calculaPreferencias(self, a):
+        for i in range(len(a)):
+            self._somaPref.append(a[i])
 
-
+    def getPreferencias(self):
+        return self._somaPref
 
 

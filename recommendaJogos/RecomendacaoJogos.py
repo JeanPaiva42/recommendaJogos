@@ -4,15 +4,14 @@ import Usuario
 import Jogos
 from Jogos import Jogos
 from Usuario import Usuario
-jogos = list();
+
 a = list()
 j = 0
+jogosLista = list()
 
 
 with open("Jogos.txt", 'r+') as txtJogos:
     for line in txtJogos:
-
-
 
         if j < 5:
             line = line.strip('\n')
@@ -20,20 +19,18 @@ with open("Jogos.txt", 'r+') as txtJogos:
             j += 1
 
         else:
-            b = Jogos(str(a[0]).upper(), float(a[1]), float(a[2]), float(a[3]), float(a[4]))
-            jogos.append(b)
+            aux = Jogos(str(a[0]).upper(), a[1:])
+            jogosLista.append(aux)
             del a
+            del aux
             a = list()
             line = line.strip('\n')
             a.append(line)
             j = 1
-jogos.append(Jogos(str(a[0]).upper(), float(a[1]), float(a[2]), float(a[3]), float(a[4])))
+aux = Jogos(str(a[0]).upper(), a[1:])
+jogosLista.append(aux)
+del j
 del a
-
-for j in range(len(jogos)):
-    print jogos[j].getNomeJogo()
-
-
 
 
 
@@ -47,10 +44,12 @@ nomes = ["Jean", "Lukkas", "Daniel", "Newt"] #"Jales", "Felipe", "Samuka", "Thal
 
 #eu sei que eu poderia ter feito isso de maneira mais automatica e simples mas fuck it
 userJean = Usuario(nomes[0])
+userJean.adicionaJogo("Silent Hill", 10)
 userJean.adicionaJogo("Final Fantasy XII", 10)
-userJean.adicionaJogo("Cory in the house", 8)
-userJean.adicionaJogo("Crash Team Racing", 7)
-userJean.adicionaJogo("Silent Hill", 9)
+userJean.adicionaJogo("Cory in the house", 10)
+userJean.adicionaJogo("Crash Team Racing", 10)
+
+
 usuariosLista = []
 usuariosLista.append(userJean)
 
@@ -74,12 +73,12 @@ userNewt = Usuario(nomes[3])
 userNewt.adicionaJogo("Final Fantasy XII", 10)
 userNewt.adicionaJogo("Dragon Quest V", 9)
 userNewt.adicionaJogo("Crash Team Racing", 6)
-userNewt.adicionaJogo("Xenogears", 9)
+userNewt.adicionaJogo("Silent hill", 8)
 
 usuariosLista.append(userNewt)
 
 numUsuarios = len(usuariosLista)
-numJogos = len(jogos)
+numJogos = len(jogosLista)
 
 #print numJogos, numUsuarios
 
@@ -87,88 +86,109 @@ numJogos = len(jogos)
 
 #criando uma matriz que vai guardar valores aleatorios que sao as notas dos jogos de cada usuario
 
-notas = np.matrix([[0]]*10)
-notasM = []
+
+notasM =[]
 
 def colocaNotas():
 
         for y in range(numUsuarios):
-            b = []
-            for x in range(numJogos):
+            b =[]
 
-                if jogos[x].getNomeJogo()[:-1] in usuariosLista[y].getJogos():
-                    #print "oi"
-                   b.append(float(usuariosLista[y].getNota(jogos[x].getNomeJogo()[:-1])))
+            for x in range(numJogos):
+                nomeJogo = jogosLista[x].getNomeJogo()
+                if nomeJogo in usuariosLista[y].getJogos():
+                    b.append(float(usuariosLista[y].getNota(nomeJogo)))
                 else:
                     b.append(0)
             notasM.append(b)
 
-'''for i in range(len(usuariosLista)):
-    for key in usuariosLista[i].getJogos().keys():
-        print str(usuariosLista[0].getJogos()[key])+ " " + str(key)
-'''
+
 colocaNotas()
-print str(jogos[0].getNomeJogo())
-print notasM
+notasM = np.asarray(notasM).transpose()
+
+#print notasM
 
 '''
 se a nota de um usuario para um jogo for igual a zero isso significa que esse jogo nao
-foi avaliado pelo usuario em questao. 5 colunas representando os usuarios, 10 linhas repreentando o numero de jogos
-
-deuNota = (notas!= 0 ) * 1
+foi avaliado pelo usuario em questao. 5 colunas representando os usuarios, 10 linhas representando o numero de jogos
+'''
+deuNota = (notasM != 0 ) * 1
 
 #print deuNota
-
-#zerando a primeira coluna da matriz para como se eu nao tivesse avaliado nenhum jogo
-notasJean = zeros((numJogos, 1))
-
-
-#vou avaliar alguns jogos
-
-notasJean[0] = 9
-notasJean[5] = 6
-notasJean[9] = 10
-
-#print notasJean
-#deletando a primeira coluna
-notas = np.delete(notas, [0,0], axis=1)
-
-#readicionando minhas notas na primeira coluna
-
-notas = append(notasJean, notas, axis=1)
-deuNota = (notas!= 0 ) * 1
-
 #print notas
-
-#print deuNota
-
-
 #funcao que normaliza os dados, precisamos dela para ficar mais facil identificar elementos acima da media e abaixo.
 # val - media = normalizo
 
-def normalizaNotas(notas, deuNota):
-    numJogos = notas.shape[0]
+def normalizaNotas(notasM, deuNota):
+    numJogos1 = notasM.shape[0]
 
-    notasMedia = zeros(shape = (numJogos,1))
-    notasNorma = zeros(shape = notas.shape)
+    notasMedia = zeros(shape = (numJogos1, 1))
+    notasNorma = zeros(shape = notasM.shape)
 
-    for i in range(numJogos):
+    for i in range(numJogos1):
         #pegando todos os elementos onde tem um 1
         idx = where(deuNota[i]==1)[0]
         #calcula media das notas dos usuarios que deram nota, ou seja != 0
-        notasMedia[i] = mean(notas[i, idx])
-        notasNorma[i, idx] = notas[i, idx] - notasMedia[i]
+        notasMedia[i] = mean(notasM[i, idx])
+        notasNorma[i, idx] = notasM[i, idx] - notasMedia[i]
 
     return notasNorma, notasMedia
 
-notas, notasMedia = normalizaNotas(notas, deuNota)
+notas, notasMedia = normalizaNotas(notasM, deuNota)
 #features dos jogos, como por exemplo elementos que o distingue e tal
 
-numFeatures = 3
+numFeatures = len(jogosLista[0].getListaFeatures())
+jogoFeatures =[]
 
-jogoFeatures = random.randn(numJogos, numFeatures)
+def colocaFeatures():
 
-usuarioPref = random.randn(numUsuarios, numFeatures)
+        a = list()
+        for x in range(numJogos):
+            jogoFeatures.append(jogosLista[x].getListaFeatures())
+        return jogoFeatures
+
+
+jogoFeatures = np.asarray(colocaFeatures())
+print jogoFeatures
+def usuarioPreferencias():
+    preferencias = []
+    for y in range(numUsuarios):
+
+        for x in range(numFeatures):
+            b = []
+            for z in range(numJogos):
+                nomeJogo = jogosLista[z].getNomeJogo()
+                if nomeJogo in usuariosLista[y].getJogos():
+                    b.append(float(jogosLista[z].getFeature(x)*(usuariosLista[y].getNota(nomeJogo)/10.0)))
+                else:
+                    b.append(0)
+
+            preferencias.append(b)
+        for i in range(len(preferencias)):
+            preferencias[i] = sum(preferencias[i])
+        usuariosLista[y].calculaPreferencias(preferencias)
+        preferencias = []
+
+usuarioPreferencias()
+
+
+def matrizPreferencia():
+    matrizPref = []
+    for i in range(numUsuarios):
+
+        matrizPref.append(usuariosLista[i].getPreferencias())
+    return matrizPref
+
+usuarioPref = (0.12)*np.asarray(matrizPreferencia())
+
+
+
+#usuarioPref = randn(numUsuarios, numFeatures)
+
+print usuarioPref
+#print usuarioPref
+
+
 #a ideia do nome dessa variavel vem da formula de uma regressao linar, ainda nao compreendo totalmente o conceito
 xInicialEteta = r_[jogoFeatures.T.flatten(), usuarioPref.T.flatten()]
 
@@ -190,11 +210,11 @@ def unroll_params(xInicialEteta, numUsuarios, numJogos, numFeatures):
 
 
 
-def calculate_gradient(xInicialEteta, notas, deuNota, numUsuarios, numJogos, numFeatures, reg_param):
+def calculate_gradient(xInicialEteta, notasM, deuNota, numUsuarios, numJogos, numFeatures, reg_param):
     X, theta = unroll_params(xInicialEteta, numUsuarios, numJogos, numFeatures)
 
     # we multiply by deuNota because we only want to consider observations for which a rating was given
-    difference = X.dot(theta.T) * deuNota - notas
+    difference = X.dot(theta.T) * deuNota - notasM
     X_grad = difference.dot(theta) + reg_param * X
     theta_grad = difference.T.dot(X) + reg_param * theta
 
@@ -203,11 +223,11 @@ def calculate_gradient(xInicialEteta, notas, deuNota, numUsuarios, numJogos, num
 
 
 
-def calculate_cost(xInicialEteta, notas, deuNota, numUsuarios, numJogos, numFeatures, reg_param):
+def calculate_cost(xInicialEteta, notasM, deuNota, numUsuarios, numJogos, numFeatures, reg_param):
     X, theta = unroll_params(xInicialEteta, numUsuarios, numJogos, numFeatures)
 
     # we multiply (element-wise) by deuNota because we only want to consider observations for which a rating was given
-    cost = sum((X.dot(theta.T) * deuNota - notas) ** 2) / 2
+    cost = sum((X.dot(theta.T) * deuNota - notasM) ** 2) / 2
     # '**' means an element-wise power
     regularization = (reg_param / 2) * (sum(theta ** 2) + sum(X ** 2))
     return cost + regularization
@@ -215,16 +235,15 @@ def calculate_cost(xInicialEteta, notas, deuNota, numUsuarios, numJogos, numFeat
 
 from scipy import optimize
 
-regParam = 10
+regParam = 30
 
 
-custoMin_e_paramOtimizados = optimize.fmin_cg(calculate_cost, fprime=calculate_gradient, x0=xInicialEteta, args=(notas, deuNota, numUsuarios, numJogos, numFeatures, regParam), maxiter=100, disp=True, full_output=True)
+custoMin_e_paramOtimizados = optimize.fmin_cg(calculate_cost, fprime=calculate_gradient, x0=xInicialEteta, args=(notasM, deuNota, numUsuarios, numJogos, numFeatures, regParam), maxiter=1000, disp=True, full_output=True)
 
 cost, optimal_movie_features_and_user_prefs = custoMin_e_paramOtimizados[1], custoMin_e_paramOtimizados[0]
 jogoFeatures, usuarioPref = unroll_params(optimal_movie_features_and_user_prefs, numUsuarios, numJogos, numFeatures)
 
 
-#Na real as recomendacoes nao farao muito sentido dado ao fato de os features de cada filme serem aleatorios e tal
 #print jogoFeatures
 
 allPrev = jogoFeatures.dot(usuarioPref.T)
@@ -232,7 +251,9 @@ allPrev = jogoFeatures.dot(usuarioPref.T)
 #print allPrev
 previsoesJean = allPrev[:, 0:1] + notasMedia
 
-#print previsoesJean
-'''
+print previsoesJean
 
+print usuariosLista[0].getJogos()
+#print jogoFeatures
 
+#print jogos[0].getListaFeature()
